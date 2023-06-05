@@ -65,7 +65,8 @@ if __name__ == "__main__":
 
     normed_K = args.homologous_K / seq_max_len
 
-    loss = LossMeter(args.task, args.mat_lambda, normed_K, args.ed_loss, args.nw_loss, device=device)
+    loss = LossMeter(args.task, args.mat_lambda, normed_K, args.ed_loss, args.nw_loss, 
+                     norm_cosnt=seq_max_len, device=device)
 
     enc_ckpts = torch.load(args.encoder_path)
     enc_args = enc_ckpts['model_args']
