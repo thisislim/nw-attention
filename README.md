@@ -24,6 +24,11 @@ Download Qiita data ([link](https://cmi-workshop.readthedocs.io/en/latest/index.
 then place string DNA sequences into `./data/`.
 Note that each DNA string data should be separated with linebreak(`'\n'`)
 
+DNA Fountain
+
+- code ([link](https://github.com/TeamErlich/dna-fountain))
+- sequencing data ([link 1](http://www.ebi.ac.uk/ena/data/view/PRJEB19305)), ([link 2](http://www.ebi.ac.uk/ena/data/view/PRJEB19307))
+
 ---
 
 ## 2. Preprocessing
