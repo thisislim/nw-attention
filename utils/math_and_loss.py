@@ -97,7 +97,8 @@ class ChiSquareLoss(nn.Module):
 
 class LossMeter:
 
-    def __init__(self, task, mat_lambda, K=1, edloss='mse', nwloss='jsd', norm_const=1, device=None):
+    def __init__(self, task, mat_lambda, K=1, edloss='mse', nwloss='jsd', ed_cdw=False, nw_cdw=False, 
+                 cdw_mthd='sig', norm_const=1, device=None):
         super(LossMeter, self).__init__()
 
         self.task = task
@@ -107,6 +108,12 @@ class LossMeter:
         self._edloss = edloss
         self._nwloss = nwloss
         self._norm_const = norm_const # seq len norm const for chi2 regression
+
+        self._ed_cdw = True if ed_cdw == 'True' else False
+        self._nw_cdw = True if nw_cdw == 'True' else False
+
+        self.cdw_method = cdw_mthd
+        self.cdw_fn = CD_WEIGHT_FN[self.cdw_method]
 
         if self.task == 'vanilla':
             if edloss == 'chi2':
@@ -153,20 +160,39 @@ class LossMeter:
             ed_predict = ed_predict * self._norm_const
             ed_label = ed_label * self._norm_const
 
+        if self._ed_cdw or self._nw_cdw:
+            cd_weight = self.cdw_fn(ed_label)
+
+            cdw_dim = [1 for _ in range(attn_predict.dim())]
+            cdw_dim[0] = bsz
+
         # 'vanilla(ed) loss
         if self.task == 'vanilla':
-            batch_ed_loss = self.ed_loss(ed_predict, ed_label)
+            if self._ed_cdw and self._train:
+                batch_ed_loss = self.ed_loss(ed_predict * cd_weight, ed_label * cd_weight)
+            else:
+                batch_ed_loss = self.ed_loss(ed_predict, ed_label)
+
             self.ed_sum += batch_ed_loss.sum().item()    
             batch_total_loss = batch_ed_loss
         
         # 'ednw' loss
         elif self.task == 'ednw':
             # edit distance
-            batch_ed_loss = self.ed_loss(ed_predict, ed_label)
+            if self._ed_cdw and self._train:
+                batch_ed_loss = self.ed_loss(ed_predict * cd_weight, ed_label * cd_weight)
+            else:
+                batch_ed_loss = self.ed_loss(ed_predict, ed_label)
+
             self.ed_sum += batch_ed_loss.sum().item()
             
             # attention
-            batch_nw_loss = self.nw_loss(attn_predict, attn_label)            
+            if self._nw_cdw and self._train:
+                cd_weight = cd_weight.reshape(cdw_dim)
+                batch_nw_loss = self.nw_loss(attn_predict * cd_weight, attn_label * cd_weight)
+            else:
+                batch_nw_loss = self.nw_loss(attn_predict, attn_label)
+
             self.nw_sum += batch_nw_loss.sum().item()
             batch_total_loss = batch_ed_loss + self.mat_lambda * batch_nw_loss
 

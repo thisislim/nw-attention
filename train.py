@@ -138,7 +138,9 @@ def train(args):
 
     normed_K = args.homologous_K / seq_max_len
     
-    loss = LossMeter(args.task, args.mat_lambda, normed_K, args.ed_loss, args.nw_loss, seq_max_len, device)
+    loss = LossMeter(args.task, args.mat_lambda, normed_K, args.ed_loss, args.nw_loss, 
+                     args.loss_ed_smdw, args.loss_nw_smdw, args.loss_smdw_method, 
+                     seq_max_len, device)
     
     # nw lambda for hyperparam descripted dirname
     nw_lam = '' if args.task == 'vanilla' else '_nw{:.0e}'.format(args.mat_lambda)
@@ -511,6 +513,9 @@ if __name__ == "__main__":
     parser.add_argument('--dropout', type=float, default=0.0, help='Dropout rate')
     parser.add_argument('--ed_loss', type=str, default='mse', help='ed loss')
     parser.add_argument('--nw_loss', type=str, default='jsd', help='nw loss')
+    parser.add_argument('--loss_ed_smdw', type=str, default='False', help='ed Loss sm distance weight')
+    parser.add_argument('--loss_nw_smdw', type=str, default='False', help='nw Loss sm distance weight')
+    parser.add_argument('--loss_smdw_method', type=str, default='sig', help='sm distance weighting method')
     parser.add_argument('--mat_lambda', type=float, default=1.0, help='Scaling Factor for NW loss')
     parser.add_argument('--epochs', type=int, default=100, help='epochs')
     parser.add_argument('--ed_lr', type=float, default=0.01, help='encoder Learning rate')
