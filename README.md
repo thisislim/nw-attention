@@ -20,14 +20,10 @@ python setup.py build_ext --inplace
 cd ..
 ```
 
-Download Qiita data ([link](https://cmi-workshop.readthedocs.io/en/latest/index.html)),
-then place string DNA sequences into `./data/`.
-Note that each DNA string data should be separated with linebreak(`'\n'`)
-
-DNA Fountain
-
-- code ([link](https://github.com/TeamErlich/dna-fountain))
-- sequencing data ([link 1](http://www.ebi.ac.uk/ena/data/view/PRJEB19305)), ([link 2](http://www.ebi.ac.uk/ena/data/view/PRJEB19307))
+Download [Qiita](https://cmi-workshop.readthedocs.io/en/latest/index.html)
+or [DNA Fountain](http://www.ebi.ac.uk/ena/data/view/PRJEB19305), 
+then place string DNA sequences into `./data/`. \
+Note that each DNA sequence should be in string format separated with linebreak(`'\n'`).
 
 ---
 
