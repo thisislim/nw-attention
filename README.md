@@ -21,9 +21,16 @@ cd ..
 ```
 
 Download [Qiita](https://cmi-workshop.readthedocs.io/en/latest/index.html)
-or [DNA Fountain](http://www.ebi.ac.uk/ena/data/view/PRJEB19305), 
+or [DNA Fountain](http://www.ebi.ac.uk/ena/data/view/PRJEB19305),
 then place string DNA sequences into `./data/`. \
 Note that each DNA sequence should be in string format separated with linebreak(`'\n'`).
+
+The pre-generated `./data/qiita.txt` can be used right away.
+Or downloaded DNA Fountain fastq file can be converted with:
+
+```
+python -m preprocessing.fountain_to_txt --data your_fastq_file.fastq --out your_out_file.txt
+```
 
 ---
 
